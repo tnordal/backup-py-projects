@@ -1,0 +1,35 @@
+[project]
+name = "backup-py-projects"
+version = "0.1.0"
+description = "Tiny helpers to back up Python project folders"
+readme = "README.md"
+authors = [
+    { name = "Tom Nordal", email = "tnordal@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+
+# Avoid accidental publishing to PyPI
+classifiers = ["Private :: Do Not Upload"]
+
+# Optional CLI: `backup-py-projects` will call backup_py_projects.cli:main
+[project.scripts]
+backup-py-projects = "backup_py_projects:hello"
+
+[project.urls]
+Homepage = "https://github.com/tnordal/backup-py-projects"
+Repository = "https://github.com/tnordal/backup-py-projects"
+Issues = "https://github.com/tnordal/backup-py-projects/issues"
+
+[build-system]
+requires = ["uv_build>=0.8.15,<0.9.0"]
+build-backend = "uv_build"
+
+
+# Dev-only tools (installed with `uv sync --dev`)
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "ruff>=0.6",
+]
