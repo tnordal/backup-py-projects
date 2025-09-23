@@ -9,6 +9,7 @@ import shutil
 import sys
 from pathlib import Path
 
+from .filters import FilterManager
 from .progress import ProgressTracker
 
 
@@ -28,6 +29,8 @@ class DirectoryCopier:
         self.destination = destination
         self.verbose = verbose
         self.files_copied = 0
+        self.files_skipped = 0
+        self.dirs_skipped = 0
         self.errors: list[str] = []
 
     def copy_directory(self, ignore_filters: bool = False) -> bool:
@@ -43,9 +46,14 @@ class DirectoryCopier:
         if self.verbose:
             print(f"Copying from: {self.source}")
             print(f"Copying to: {self.destination}")
+            if not ignore_filters:
+                print("Applying .ignorecopy filters...")
+
+        # Initialize filter manager
+        filter_manager = FilterManager(self.source, ignore_filters)
 
         # Count total files for progress tracking
-        total_files = self._count_files(ignore_filters)
+        total_files = self._count_files(filter_manager)
 
         if total_files == 0:
             print("No files to copy.")
@@ -56,7 +64,7 @@ class DirectoryCopier:
 
         try:
             self._copy_recursive(
-                self.source, self.destination, ignore_filters, progress
+                self.source, self.destination, filter_manager, progress
             )
         except KeyboardInterrupt:
             print("\nOperation cancelled by user.")
@@ -69,6 +77,10 @@ class DirectoryCopier:
 
         # Print summary
         print(f"\nCopy completed: {self.files_copied} files copied")
+        if self.files_skipped > 0 or self.dirs_skipped > 0:
+            print(
+                f"Skipped: {self.files_skipped} files, {self.dirs_skipped} directories"
+            )
         if self.errors:
             print(f"Errors encountered: {len(self.errors)}")
             if self.verbose:
@@ -77,27 +89,39 @@ class DirectoryCopier:
 
         return True
 
-    def _count_files(self, ignore_filters: bool) -> int:
+    def _count_files(self, filter_manager: FilterManager) -> int:
         """
         Count the total number of files that will be copied.
 
         Args:
-            ignore_filters: Whether to ignore filtering rules
+            filter_manager: Filter manager for checking exclusions
 
         Returns:
             int: Total number of files to be copied
         """
         count = 0
         for root, dirs, files in os.walk(self.source):
-            # TODO: Apply filtering logic here when filters module is implemented
-            count += len(files)
+            root_path = Path(root)
+
+            # Filter directories in-place to avoid walking ignored directories
+            dirs[:] = [
+                d
+                for d in dirs
+                if not filter_manager.should_ignore_directory(root_path / d)
+            ]
+
+            # Count files that won't be filtered
+            for file in files:
+                file_path = root_path / file
+                if not filter_manager.should_ignore_file(file_path):
+                    count += 1
         return count
 
     def _copy_recursive(
         self,
         current_source: Path,
         current_dest: Path,
-        ignore_filters: bool,
+        filter_manager: FilterManager,
         progress: ProgressTracker,
     ) -> None:
         """
@@ -106,7 +130,7 @@ class DirectoryCopier:
         Args:
             current_source: Current source directory being processed
             current_dest: Current destination directory
-            ignore_filters: Whether to ignore filtering rules
+            filter_manager: Filter manager for checking exclusions
             progress: Progress tracker instance
         """
         try:
@@ -118,10 +142,27 @@ class DirectoryCopier:
                 dest_item = current_dest / item.name
 
                 if item.is_file():
-                    self._copy_file(item, dest_item, progress)
+                    # Check if file should be ignored
+                    if filter_manager.should_ignore_file(item):
+                        self.files_skipped += 1
+                        if self.verbose:
+                            progress.update_with_message(f"Skipped: {item.name}")
+                        else:
+                            progress.update()
+                    else:
+                        self._copy_file(item, dest_item, progress)
+
                 elif item.is_dir():
-                    # Recursively copy subdirectory
-                    self._copy_recursive(item, dest_item, ignore_filters, progress)
+                    # Check if directory should be ignored
+                    if filter_manager.should_ignore_directory(item):
+                        self.dirs_skipped += 1
+                        if self.verbose:
+                            progress.update_with_message(f"Skipped dir: {item.name}")
+                        # Don't recurse into ignored directories
+                        continue
+                    else:
+                        # Recursively copy subdirectory
+                        self._copy_recursive(item, dest_item, filter_manager, progress)
 
         except PermissionError as e:
             error_msg = f"Permission denied accessing '{current_source}': {e}"
