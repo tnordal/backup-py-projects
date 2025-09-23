@@ -7,7 +7,9 @@ authors = [
     { name = "Tom Nordal", email = "tnordal@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "tqdm>=4.67.1",
+]
 
 
 # Avoid accidental publishing to PyPI
@@ -15,7 +17,7 @@ classifiers = ["Private :: Do Not Upload"]
 
 # Optional CLI: `backup-py-projects` will call backup_py_projects.cli:main
 [project.scripts]
-backup-py-projects = "backup_py_projects:hello"
+backup-py-projects = "backup_py_projects:main"
 
 [project.urls]
 Homepage = "https://github.com/tnordal/backup-py-projects"
