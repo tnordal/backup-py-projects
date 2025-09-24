@@ -132,6 +132,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Changelog
 
+### v0.2.0
+- Removed `--install` CLI flag (global installation now handled via `uv tool install`)
+- Added comprehensive README.md with installation and usage documentation
+- Added MIT license
+- Improved project documentation and setup
+
 ### v0.1.0
 - Initial release
 - Recursive directory copying with `.ignorecopy` support
