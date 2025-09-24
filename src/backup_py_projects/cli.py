@@ -40,10 +40,6 @@ def parse_arguments() -> argparse.Namespace:
         "--verbose", action="store_true", help="Display detailed operation messages"
     )
 
-    parser.add_argument(
-        "--install", action="store_true", help="Install as a system-wide Python package"
-    )
-
     return parser.parse_args()
 
 

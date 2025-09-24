@@ -18,7 +18,6 @@ Create a Python utility that recursively copies files and directories from a sou
 - **Optional Flags**:
   - `--ignore-copy`: Override `.ignorecopy` filtering (copy everything)
   - `--verbose`: Display detailed operation messages
-  - `--install`: Install as a system-wide Python package
 
 ### User Experience Features
 - **Progress Bar**: Use `tqdm` for visual progress indication
@@ -36,7 +35,6 @@ src/backup_py_projects/
 ├── filters.py           # File filtering with .ignorecopy support
 ├── copier.py            # Core copying functionality
 ├── progress.py          # Progress tracking with tqdm
-└── installer.py         # Package installation utilities
 ```
 
 ### Implementation Modules
@@ -60,10 +58,6 @@ src/backup_py_projects/
    - Count total eligible files for accurate progress
    - Integrate `tqdm` for terminal-based progress bars
    - Support verbose mode output
-
-5. **Installer Module** (`installer.py`)
-   - Handle package installation and executable permissions
-   - Cross-platform compatibility
 
 ## Development Standards
 
@@ -101,7 +95,7 @@ src/backup_py_projects/
 - **Dependencies**: Added `tqdm>=4.67.1` for progress bars
 - **CLI Interface**: Full `argparse` implementation with all required arguments:
   - Positional: source and destination directories
-  - Optional: `--ignore-copy`, `--verbose`, `--install` flags
+  - Optional: `--ignore-copy`, `--verbose` flags
 - **Entry Point**: Updated `pyproject.toml` to map `backup-py-projects` to `backup_py_projects:main`
 - **Core Functionality**: 
   - Recursive directory copying using `os.walk()` and `shutil.copy2()`
@@ -154,10 +148,10 @@ src/backup_py_projects/
 - **Cross-Platform**: Path handling works on Windows (tested), designed for Linux compatibility
 - **User Feedback**: Clear summary statistics (files copied, skipped, errors)
 
-### Phase 4: Installation & Packaging 📋 PLANNED
-1. Implement `--install` functionality (placeholder currently exists)
-2. Update `pyproject.toml` entry points ✅ (Already completed in Phase 1)
-3. Test package installation and CLI availability ✅ (Already completed in Phase 1)
+### Phase 4: Installation & Packaging ✅ COMPLETED
+1. Update `pyproject.toml` entry points ✅ (Already completed in Phase 1)
+2. Test package installation and CLI availability ✅ (Already completed in Phase 1)
+3. Enable GitHub installation via `uv tool install` ✅ (Completed)
 4. Documentation and usage examples
 
 ## Testing Strategy
@@ -187,7 +181,6 @@ src/backup_py_projects/
 - Cross-platform compatibility verified on Windows
 
 **Next Steps: Phase 4 - Installation & Packaging**
-- Implement `--install` functionality
 - Test package installation and CLI availability
 - Documentation and usage examples
 
@@ -224,7 +217,4 @@ uv run backup-py-projects /source/path /destination/path --verbose
 
 # Override exclusions
 uv run backup-py-projects /source/path /destination/path --ignore-copy
-
-# Install system-wide
-uv run backup-py-projects --install
 ```

@@ -22,11 +22,6 @@ def main() -> None:
     # Parse command-line arguments
     args = parse_arguments()
 
-    # Handle install flag (placeholder for now)
-    if args.install:
-        print("Installation functionality not yet implemented.")
-        return
-
     # Validate source and destination paths
     source_path, dest_path = validate_paths(args.source, args.destination)
 

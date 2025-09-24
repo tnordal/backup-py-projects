@@ -16,7 +16,6 @@ This project is a Python utility that recursively copies files and directories f
   2. Destination directory (positional argument).
   3. `--ignore-copy`: Override `.ignorecopy` filtering (copy every file).
   4. `--verbose`: Display detailed output about each copy operation.
-  5. `--install`: Optional installation flag to install as a Python Package
 
 - **User Experience Enhancements:**  
   - Use `argparse` for command-line processing.
@@ -39,9 +38,6 @@ This project is a Python utility that recursively copies files and directories f
 
 4. **Progress Indicator Module:**  
    - Counts the eligible files and uses `tqdm` to display progress as files are copied.
-
-5. **Installer Module:**  
-   - Provides an installation option that install the module as Python Package and assigns the necessary executable permissions.
 
 ## Considerations
 
