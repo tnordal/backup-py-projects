@@ -13,7 +13,7 @@ dependencies = [
 
 
 # Avoid accidental publishing to PyPI
-classifiers = ["Private :: Do Not Upload"]
+# classifiers = ["Private :: Do Not Upload"]
 
 # Optional CLI: `backup-py-projects` will call backup_py_projects.cli:main
 [project.scripts]
@@ -25,8 +25,12 @@ Repository = "https://github.com/tnordal/backup-py-projects"
 Issues = "https://github.com/tnordal/backup-py-projects/issues"
 
 [build-system]
-requires = ["uv_build>=0.8.15,<0.9.0"]
-build-backend = "uv_build"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# Setuptools configuration for src-layout
+[tool.setuptools.packages.find]
+where = ["src"]
 
 
 # Dev-only tools (installed with `uv sync --dev`)
